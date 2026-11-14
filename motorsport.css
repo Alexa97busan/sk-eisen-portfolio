@@ -3,12 +3,12 @@
   --ink:#0C0F14; --sub:#5A6270; --line:#CFD5DE; --bg:#E2E6EE; --card:#FFFFFF; --tint:#EEF1F5;
   --navy:#1C2028; --navy2:#2B2F38; --accent:#1C2028; --btn-bg:#1C2028; --btn-ink:#FFFFFF;
   --amber:#FFDD00; --purple:#4D2689;
-  --bg-gradient:linear-gradient(180deg,#F0F2F6 0%,#E2E6EE 35%,#D4D9E2 70%,#C8CED8 100%);
+  --bg-gradient:linear-gradient(180deg,#F0F2F6 0%,#C8CED8 100%);
   --glow:rgba(255,255,255,1); --gridC:rgba(0,0,0,.025);
   --sh1:0 1px 2px rgba(15,20,32,.08);
   --sh2:0 16px 30px rgba(15,20,32,.07),0 30px 60px rgba(15,20,32,.04);
   --sh3:0 20px 40px rgba(15,20,32,.10),0 40px 80px rgba(15,20,32,.06);
-  --halo:0 0 65px #fff,0 0 110px rgba(255,255,255,.85);
+  --halo:0 0 65px #FFFFFF,0 0 110px #FFFFFF;
   --white-prism:linear-gradient(135deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.4) 44%,rgba(255,255,255,.95) 50%,rgba(255,255,255,.4) 56%,rgba(255,255,255,0) 100%);
   --font:"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","Helvetica Neue",system-ui,sans-serif;
   --display:"Arial Black","Helvetica Neue",var(--font);
@@ -99,18 +99,21 @@ section{padding:56px 0;position:relative}
 /* isolated panels: cards, tiles and shots share one spec: white, 1px grey frame, prism, per-panel tilt */
 .card,.tile,.shot{
   position:relative;background:var(--card);border:1px solid var(--line);border-top:2px solid var(--card);
-  transform-style:preserve-3d;transform:perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0);
-  transition:transform .25s cubic-bezier(.16,1,.3,1),box-shadow .4s ease,border-color .3s,opacity .7s ease;overflow:hidden;
+  transition:box-shadow .4s ease,border-color .3s,opacity .7s ease;overflow:hidden;
   box-shadow:calc(var(--side,-1)*10px) 16px 30px rgba(15,20,32,.07),calc(var(--side,-1)*20px) 30px 60px rgba(15,20,32,.04);
 }
+/* 무결점: 외곽 프레임(.card/.tile/.shot)은 움직이지 않고 호버 판정만 담당, 내부 .tilt 래퍼만 3D 틸트 */
+.tilt{position:relative;flex:1;min-width:0;display:flex;flex-direction:column;transform-style:preserve-3d;backface-visibility:hidden;will-change:transform;
+  transform:perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0);transition:transform .25s cubic-bezier(.16,1,.3,1)}
 .card:nth-child(odd),.tile:nth-child(odd),.shot:nth-child(odd){--side:-1}
 .card:nth-child(even),.tile:nth-child(even),.shot:nth-child(even){--side:1}
+.card:hover .tilt,.tile:hover .tilt,.shot:hover .tilt{
+  transform:perspective(1000px) rotateX(var(--rx,3deg)) rotateY(var(--ry,calc(var(--side,-1)*-4deg))) translateZ(35px)}
 .card:hover,.tile:hover,.shot:hover{
-  transform:perspective(1000px) rotateX(var(--rx,3deg)) rotateY(var(--ry,calc(var(--side,-1)*-4deg))) translateZ(35px);
   border-color:#AAB3C0;
   box-shadow:calc(var(--side,-1)*18px) 24px 45px rgba(10,14,22,.14),calc(var(--side,-1)*35px) 45px 85px rgba(10,14,22,.10),var(--halo);
 }
-.card:active,.tile:active,.shot:active{transform:perspective(1000px) translateZ(10px)}
+.card:active .tilt,.tile:active .tilt,.shot:active .tilt{transform:perspective(1000px) translateZ(10px)}
 .card::before,.tile::before,.shot::before{
   content:"";position:absolute;top:-100%;left:-100%;width:300%;height:300%;background:var(--white-prism);
   opacity:.18;pointer-events:none;mix-blend-mode:overlay;transform:rotate(35deg);
@@ -120,7 +123,13 @@ section{padding:56px 0;position:relative}
 .card{padding:24px}
 .card:hover{box-shadow:calc(var(--side,-1)*18px) 24px 45px rgba(10,14,22,.14),calc(var(--side,-1)*35px) 45px 85px rgba(10,14,22,.10),var(--halo)}
 .card h3{font-family:var(--display);font-weight:900;text-transform:uppercase;letter-spacing:.01em;font-size:18px}
-.card > *:not(.tag){position:relative;z-index:1}
+.card .tilt > *:not(.tag){position:relative;z-index:1}
+/* 분해 레이어: 호버 시 내부 요소가 Z축으로 떠오름 (배경 0 → 콘텐츠 +8px → 태그 +14px) */
+.card:hover .tilt > *:not(.tag),.shot:hover .tilt > *{transform:translateZ(8px);transition:transform .35s cubic-bezier(.16,1,.3,1)}
+.card:hover .tilt > .tag{transform:translateZ(14px);transition:transform .35s cubic-bezier(.16,1,.3,1)}
+/* 이벤트 버블링 차단: 카드 안 텍스트/태그는 포인터를 가로채지 않음 (링크는 예외) */
+.card .tilt > *{pointer-events:none}
+.card a{pointer-events:auto}
 .tag{display:inline-block;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;padding:4px 9px;margin:0 6px 6px 0;background:var(--amber);color:#000;border:1px solid #000}
 .tag.green,.tag.teal,.tag.amber{background:var(--amber);color:#000}
 .tag.purple{background:var(--purple);color:#fff;border-color:var(--purple)}
@@ -147,6 +156,7 @@ section{padding:56px 0;position:relative}
 .spec dd{margin:0;font-weight:700}
 .count{font-variant-numeric:tabular-nums}
 .gauge-demo{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.gauge-demo > .tilt{flex-direction:row;flex-wrap:wrap;align-items:center;gap:20px;justify-content:space-around}
 .rpm{position:relative;width:150px;height:150px;background:conic-gradient(var(--ink) calc(var(--p,0)*1%),var(--line) 0);display:grid;place-items:center;box-shadow:inset 0 0 0 10px var(--card),var(--sh1);transition:--p .3s}
 .rpm span{position:relative;z-index:1;text-align:center;font-weight:900;font-size:24px;font-variant-numeric:tabular-nums}
 .rpm small{display:block;font-size:12px;color:var(--sub);font-weight:700}

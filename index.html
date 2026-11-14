@@ -455,6 +455,15 @@
 (function(){
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  // 무결점 호버: 카드·타일·샷의 자식을 .tilt 래퍼로 한 번 감싼다 (외곽 프레임은 고정)
+  document.querySelectorAll('.card,.tile,.shot').forEach(function(el){
+    if (el.querySelector(':scope > .tilt')) return;
+    var w = document.createElement('div');
+    w.className = 'tilt';
+    while (el.firstChild) w.appendChild(el.firstChild);
+    el.appendChild(w);
+  });
+
   // scroll progress bar
   var bar = document.getElementById('progress');
   function onScroll(){
