@@ -1,7 +1,7 @@
 /* 90s Heritage Motorsport Editorial — résumé portfolio theme */
 :root{
-  --ink:#111111; --sub:#4a4f57; --line:#111111; --bg:#f1efe9; --card:#fbfaf6;
-  --accent:#e21b24; --tint:#f6dcdc; --navy:#111111; --navy2:#1c1c1c;
+  --ink:#111111; --sub:#5f646b; --line:#111111; --bg:#f2f3f4; --card:#ffffff;
+  --accent:#e21b24; --tint:#eceef0; --navy:#2b2f35; --navy2:#3a3f46;
   --amber:#ffd100; --green:#0055a5; --purple:#3d2c68; --teal:#18336e;
   --silver:#c2c6ca; --orange:#ff4500;
   --sh1:none; --sh2:6px 6px 0 var(--ink); --sh3:10px 10px 0 var(--ink);
@@ -10,13 +10,13 @@
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --ink:#f1efe9; --sub:#c2c6ca; --line:#f1efe9; --bg:#111111; --card:#1c1c1c;
-    --accent:#ff3b43; --tint:#3a1416; --navy:#000; --navy2:#111; --sh2:6px 6px 0 #e21b24; --sh3:10px 10px 0 #e21b24;
+    --ink:#f2f2f2; --sub:#b4b8be; --line:#f2f2f2; --bg:#1a1b1d; --card:#25272a;
+    --accent:#ff3b43; --tint:#3a3d42; --navy:#151618; --navy2:#2b2f35; --sh2:6px 6px 0 #e21b24; --sh3:10px 10px 0 #e21b24;
   }
 }
 :root[data-theme="dark"]{
-  --ink:#f1efe9; --sub:#c2c6ca; --line:#f1efe9; --bg:#111111; --card:#1c1c1c;
-  --accent:#ff3b43; --tint:#3a1416; --navy:#000; --navy2:#111; --sh2:6px 6px 0 #e21b24; --sh3:10px 10px 0 #e21b24;
+  --ink:#f2f2f2; --sub:#b4b8be; --line:#f2f2f2; --bg:#1a1b1d; --card:#25272a;
+  --accent:#ff3b43; --tint:#3a3d42; --navy:#151618; --navy2:#2b2f35; --sh2:6px 6px 0 #e21b24; --sh3:10px 10px 0 #e21b24;
 }
 body{background:var(--bg);color:var(--ink);font-family:var(--font);
   background-image:repeating-linear-gradient(90deg,transparent 0 39px,rgba(17,17,17,.05) 39px 40px)}
@@ -29,7 +29,8 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);
 .progress{background:var(--amber)}
 
 /* hero: diagonal red band over carbon, extended display type */
-.hero{background:var(--navy);color:#fbfaf6;padding:72px 0 60px}
+.hero{background:var(--navy);color:#fbfaf6;padding:72px 0 60px;
+  background-image:radial-gradient(rgba(251,250,246,.09) 1.2px,transparent 1.6px);background-size:8px 8px}
 .hero::before{content:"";position:absolute;inset:0;background:var(--accent);
   clip-path:polygon(58% 0,100% 0,100% 100%,38% 100%);opacity:.94;pointer-events:none}
 .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;
@@ -45,6 +46,10 @@ body{background:var(--bg);color:var(--ink);font-family:var(--font);
 .hero .stat{border-top:4px solid #fff}
 .hero .stat b{font-family:var(--display);font-weight:900;color:var(--amber)}
 .hero .stat span{color:#fbfaf6}
+/* data & spec blocks: figures set like a spec sheet */
+.stats .stat{border-top:4px solid var(--ink);padding-top:10px}
+.stats .stat b{font-family:var(--display);font-weight:900;font-size:clamp(26px,3vw,40px);line-height:1;display:block}
+.stats .stat span{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;margin-top:6px}
 .hero-visual img,.hero figure img{border:4px solid var(--ink);box-shadow:10px 10px 0 var(--amber)}
 
 /* sections: poster spec-block headings with numbered tag */
@@ -58,7 +63,8 @@ section:nth-of-type(odd){background-color:var(--bg)}
 section[style*="background:var(--card)"]{background:var(--card)!important;border-top:3px solid var(--ink);border-bottom:3px solid var(--ink)}
 
 /* cards: hard-edged poster panels with silver spec rule */
-.card{background:var(--card);border:3px solid var(--ink);box-shadow:var(--sh2);padding:24px}
+.card{position:relative;background:var(--card);border:3px solid var(--ink);box-shadow:var(--sh2);padding:24px}
+.card::after{content:"";position:absolute;top:-3px;right:-3px;width:14px;height:14px;background:var(--orange);border:3px solid var(--ink)}
 .card:hover{transform:translate(-3px,-3px);box-shadow:var(--sh3)}
 .card h3{font-family:var(--display);font-weight:900;text-transform:uppercase;letter-spacing:.01em;font-size:20px}
 .tag{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:11px;letter-spacing:.1em;
@@ -85,7 +91,7 @@ section[style*="background:var(--card)"]{background:var(--card)!important;border
 .poster-strip figcaption{position:absolute;left:8px;bottom:8px;font-family:var(--display);font-weight:900;font-size:11px;
   text-transform:uppercase;background:var(--amber);color:var(--ink);padding:3px 6px}
 
-footer{background:var(--ink);color:#c2c6ca;border-top:6px solid var(--accent)}
+footer{background:#2b2f35;color:#c2c6ca;border-top:6px solid var(--accent)}
 footer .wrap{font-family:var(--display);text-transform:uppercase;font-size:12px;letter-spacing:.08em}
 
 /* mobile */
