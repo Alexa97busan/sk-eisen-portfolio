@@ -1,0 +1,102 @@
+/* 90s Heritage Motorsport Editorial — résumé portfolio theme */
+:root{
+  --ink:#111111; --sub:#4a4f57; --line:#111111; --bg:#f1efe9; --card:#fbfaf6;
+  --accent:#e21b24; --tint:#f6dcdc; --navy:#111111; --navy2:#1c1c1c;
+  --amber:#ffd100; --green:#0055a5; --purple:#3d2c68; --teal:#18336e;
+  --silver:#c2c6ca; --orange:#ff4500;
+  --sh1:none; --sh2:6px 6px 0 var(--ink); --sh3:10px 10px 0 var(--ink);
+  --font:"Helvetica Neue","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+  --display:"Arial Black","Helvetica Neue",var(--font);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ink:#f1efe9; --sub:#c2c6ca; --line:#f1efe9; --bg:#111111; --card:#1c1c1c;
+    --accent:#ff3b43; --tint:#3a1416; --navy:#000; --navy2:#111; --sh2:6px 6px 0 #e21b24; --sh3:10px 10px 0 #e21b24;
+  }
+}
+:root[data-theme="dark"]{
+  --ink:#f1efe9; --sub:#c2c6ca; --line:#f1efe9; --bg:#111111; --card:#1c1c1c;
+  --accent:#ff3b43; --tint:#3a1416; --navy:#000; --navy2:#111; --sh2:6px 6px 0 #e21b24; --sh3:10px 10px 0 #e21b24;
+}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);
+  background-image:repeating-linear-gradient(90deg,transparent 0 39px,rgba(17,17,17,.05) 39px 40px)}
+
+/* top bar: carbon strip with red rule */
+.topbar{background:var(--navy);border-bottom:4px solid var(--accent);box-shadow:none}
+.brand{font-family:var(--display);font-weight:900;text-transform:uppercase;letter-spacing:.04em;color:#fff}
+.nav a{color:#c2c6ca;font-weight:700;text-transform:uppercase;letter-spacing:.04em;font-size:13px}
+.nav a:hover,.nav a:focus-visible{background:var(--accent);color:#fff}
+.progress{background:var(--amber)}
+
+/* hero: diagonal red band over carbon, extended display type */
+.hero{background:var(--navy);color:#fbfaf6;padding:72px 0 60px}
+.hero::before{content:"";position:absolute;inset:0;background:var(--accent);
+  clip-path:polygon(58% 0,100% 0,100% 100%,38% 100%);opacity:.94;pointer-events:none}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;
+  background:repeating-linear-gradient(90deg,var(--amber) 0 40px,transparent 40px 56px)}
+.hero .wrap{position:relative;z-index:1}
+.hero h1,.hero .lead,.hero .kicker{color:#fbfaf6}
+.hero h1{font-family:var(--display);font-weight:900;text-transform:uppercase;letter-spacing:-.01em;
+  line-height:.95;font-size:clamp(34px,6vw,68px);transform:scaleX(1.06);transform-origin:left}
+.hero .lead{color:#fbfaf6;font-weight:500}
+.hero .kicker{background:var(--amber);color:var(--ink);box-shadow:none;letter-spacing:.14em}
+.hero .btn{background:var(--ink);color:#fff;box-shadow:6px 6px 0 #fff}
+.hero .btn.ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 3px #fff}
+.hero .stat{border-top:4px solid #fff}
+.hero .stat b{font-family:var(--display);font-weight:900;color:var(--amber)}
+.hero .stat span{color:#fbfaf6}
+.hero-visual img,.hero figure img{border:4px solid var(--ink);box-shadow:10px 10px 0 var(--amber)}
+
+/* sections: poster spec-block headings with numbered tag */
+section{position:relative}
+section h2{font-family:var(--display);font-weight:900;text-transform:uppercase;letter-spacing:-.01em;
+  line-height:1.02;font-size:clamp(26px,4vw,44px);color:var(--ink);
+  border-left:12px solid var(--accent);padding-left:16px;transform:scaleX(1.03);transform-origin:left}
+section[id]:not(.hero)::before{content:attr(id);display:inline-block;font-family:var(--display);font-weight:900;
+  font-size:13px;text-transform:uppercase;letter-spacing:.14em;background:var(--ink);color:var(--amber);padding:4px 10px;margin-bottom:14px}
+section:nth-of-type(odd){background-color:var(--bg)}
+section[style*="background:var(--card)"]{background:var(--card)!important;border-top:3px solid var(--ink);border-bottom:3px solid var(--ink)}
+
+/* cards: hard-edged poster panels with silver spec rule */
+.card{background:var(--card);border:3px solid var(--ink);box-shadow:var(--sh2);padding:24px}
+.card:hover{transform:translate(-3px,-3px);box-shadow:var(--sh3)}
+.card h3{font-family:var(--display);font-weight:900;text-transform:uppercase;letter-spacing:.01em;font-size:20px}
+.tag{font-family:var(--display);font-weight:900;text-transform:uppercase;font-size:11px;letter-spacing:.1em;
+  background:var(--ink);color:#fff;box-shadow:none;padding:5px 9px}
+.tag.green{background:var(--green)}
+.tag.purple{background:var(--purple)}
+.tag.amber{background:var(--amber);color:var(--ink)}
+.tag.teal{background:var(--teal)}
+.muted{color:var(--sub)}
+
+/* buttons: flat red with hard offset shadow */
+.btn{background:var(--accent);color:#fff;border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);
+  font-family:var(--display);font-weight:900;text-transform:uppercase;letter-spacing:.04em;font-size:14px}
+.btn:hover{background:var(--ink);color:#fff;box-shadow:5px 5px 0 var(--accent);transform:translate(-2px,-2px)}
+.btn:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.btn.ghost{background:var(--card);color:var(--ink)}
+.btn.ghost:hover{background:var(--amber);color:var(--ink)}
+
+/* poster strip: the five source posters as a mirrored, cropped band */
+.poster-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:0;background:var(--ink);border-top:4px solid var(--accent);border-bottom:4px solid var(--accent)}
+.poster-strip figure{margin:0;overflow:hidden;aspect-ratio:3/4;position:relative}
+.poster-strip img{width:100%;height:100%;object-fit:cover;display:block;filter:contrast(1.05) saturate(1.05)}
+.poster-strip figure:nth-child(even) img{transform:scaleX(-1)}
+.poster-strip figcaption{position:absolute;left:8px;bottom:8px;font-family:var(--display);font-weight:900;font-size:11px;
+  text-transform:uppercase;background:var(--amber);color:var(--ink);padding:3px 6px}
+
+footer{background:var(--ink);color:#c2c6ca;border-top:6px solid var(--accent)}
+footer .wrap{font-family:var(--display);text-transform:uppercase;font-size:12px;letter-spacing:.08em}
+
+/* mobile */
+@media (max-width:719px){
+  .hero::before{clip-path:polygon(0 42%,100% 22%,100% 100%,0 100%);opacity:.9}
+  .hero h1{transform:none;font-size:clamp(28px,8.2vw,40px);overflow-wrap:anywhere;word-break:keep-all}
+  .hero-grid{grid-template-columns:minmax(0,1fr)}
+  .hero-grid>*,.stats>*{min-width:0}
+  .stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+  .poster-strip{grid-template-columns:repeat(2,1fr)}
+  .poster-strip figure:last-child{grid-column:1 / -1;aspect-ratio:16/9}
+  section h2{border-left-width:8px;padding-left:12px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
