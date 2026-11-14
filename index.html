@@ -1,0 +1,794 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SK아이젠 포트폴리오 · 복잡한 차량 데이터를 직관적인 언어로 번역하다</title>
+<meta name="description" content="SK아이젠 지원 포트폴리오. 직접 만든 OBD2 대시보드, 정비 학습 사이트, 배포한 웹 도구 목록.">
+<style>
+:root{
+  --ink:#1b2430; --sub:#5b6675; --line:#dfe4ea; --bg:#f4f6f9; --card:#ffffff;
+  --accent:#0a66c2; --tint:#eaf2fb; --navy:#0f2742; --navy2:#1c4373;
+  --amber:#e8830c; --green:#1f8a5b; --purple:#6b4fbb; --teal:#0e8a99;
+  --sh1:0 1px 0 rgba(15,39,66,.06),0 1px 2px rgba(15,39,66,.10);
+  --sh2:0 2px 0 rgba(15,39,66,.06),0 8px 16px -6px rgba(15,39,66,.16),0 16px 32px -14px rgba(15,39,66,.20);
+  --sh3:0 4px 0 rgba(15,39,66,.07),0 20px 36px -14px rgba(15,39,66,.30),0 34px 64px -22px rgba(15,39,66,.24);
+  --font:"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic",system-ui,sans-serif;
+}
+:root[data-theme="dark"]{ --ink:#e9eef5; --sub:#aab4c3; --line:#2a3441; --bg:#0c1118; --card:#162029; --tint:#1a2a3d; }
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){ --ink:#e9eef5; --sub:#aab4c3; --line:#2a3441; --bg:#0c1118; --card:#162029; --tint:#1a2a3d; }
+}
+*{box-sizing:border-box;border-radius:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.8;letter-spacing:-.01em;word-break:keep-all;overflow-wrap:break-word;overflow-x:hidden}
+img{max-width:100%;height:auto;display:block}
+a{color:var(--accent)}
+h1,h2,h3{line-height:1.35;margin:0;letter-spacing:-.02em}
+h1{font-size:clamp(28px,5vw,46px);font-weight:800}
+h2{font-size:clamp(22px,3.4vw,30px);font-weight:800}
+h3{font-size:19px;font-weight:700}
+p{margin:0 0 14px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+.kicker{display:inline-block;font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--accent);background:var(--tint);padding:6px 10px;margin-bottom:14px;box-shadow:var(--sh1)}
+.lead{font-size:18px;color:var(--sub);max-width:680px}
+.muted{color:var(--sub);font-size:15px}
+section{padding:56px 0;position:relative}
+.sec-head{margin-bottom:28px}
+.sec-head h2{margin-top:4px}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:50;background:var(--navy);color:#fff;box-shadow:0 6px 18px -8px rgba(15,39,66,.5)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px}
+.brand{font-weight:800;font-size:15px;letter-spacing:.02em}
+.nav{display:flex;flex-wrap:wrap;gap:4px}
+.nav a{color:#cfdbea;text-decoration:none;font-size:14px;padding:8px 10px;transition:background .2s,color .2s}
+.nav a:hover,.nav a:focus-visible{background:var(--navy2);color:#fff;outline:none}
+.progress{position:absolute;left:0;bottom:-3px;height:3px;background:var(--amber);width:0}
+
+/* hero */
+.hero{padding:64px 0 48px;background:linear-gradient(180deg,var(--navy) 0,var(--navy2) 100%);color:#fff;position:relative;overflow:hidden}
+.hero .kicker{background:rgba(255,255,255,.12);color:#fff;box-shadow:none}
+.hero .lead{color:#c8d6e8}
+.hero .meta{font-size:14px;color:#9fb4cf;margin-top:18px}
+.hero-grid{display:grid;gap:32px;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:28px}
+.stat{background:rgba(255,255,255,.08);padding:14px 12px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}
+.stat b{display:block;font-size:clamp(22px,4vw,30px);font-weight:800}
+.stat span{font-size:13px;color:#c8d6e8}
+.hero-visual{position:relative;background:#fff;padding:10px;box-shadow:var(--sh3);transform:rotate(-.6deg);transition:transform .4s cubic-bezier(.2,.8,.2,1),box-shadow .4s}
+.hero-visual:hover{transform:rotate(0) translateY(-4px);box-shadow:0 6px 0 rgba(0,0,0,.08),0 30px 60px -20px rgba(0,0,0,.5)}
+.hero-visual img{width:100%;aspect-ratio:1/1;object-fit:cover}
+.hero-visual figcaption{font-size:13px;color:var(--sub);padding:8px 2px 2px}
+.maint{margin-top:36px}
+.maint-title{font-size:14px;color:#9fb4cf;margin:0 0 12px}
+.maint-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.maint-grid figure{margin:0}
+.maint-grid img,.maint-grid video{width:100%;aspect-ratio:3/4;object-fit:cover;display:block;background:#fff;border-radius:6px}
+
+/* buttons & links */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:12px 18px;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;font-size:15px;box-shadow:0 3px 0 #064d93,0 10px 18px -8px rgba(10,102,194,.6);transition:transform .15s,box-shadow .15s,background .2s;border:0;cursor:pointer;font-family:inherit}
+.btn:hover{transform:translateY(-2px);box-shadow:0 5px 0 #064d93,0 14px 24px -8px rgba(10,102,194,.7);background:#0b72d6}
+.btn:active{transform:translateY(2px);box-shadow:0 1px 0 #064d93,0 3px 6px -2px rgba(10,102,194,.5)}
+.btn.ghost{background:var(--card);color:var(--accent);box-shadow:var(--sh2)}
+.btn.ghost:hover{background:var(--tint)}
+.btn.ghost:active{box-shadow:var(--sh1)}
+.btn:focus-visible,.tile:focus-visible,button:focus-visible,input:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+.hero .btn.ghost{background:rgba(255,255,255,.1);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.3)}
+
+/* cards */
+.card{background:var(--card);box-shadow:var(--sh2);padding:24px;transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
+.card:hover{transform:translateY(-4px);box-shadow:var(--sh3)}
+.card:active{transform:translateY(1px);box-shadow:var(--sh1)}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:4px 8px;margin:0 6px 6px 0;background:var(--tint);color:var(--accent);box-shadow:var(--sh1)}
+.tag.green{background:#e4f4ec;color:var(--green)}
+.tag.purple{background:#efeaf9;color:var(--purple)}
+.tag.amber{background:#fdf0de;color:#a85b00}
+.tag.teal{background:#e2f3f5;color:var(--teal)}
+.two{display:grid;gap:20px}
+.layer{position:relative}
+.layer::before{content:"";position:absolute;inset:10px -10px -10px 10px;background:var(--tint);z-index:-1;box-shadow:var(--sh1);transition:inset .3s}
+.layer:hover::before{inset:6px -6px -6px 6px}
+.layer{z-index:0}
+
+/* 01 */
+.q{margin:24px 0;padding:22px 24px;background:var(--navy);color:#fff;box-shadow:var(--sh3);font-size:20px;font-weight:700;line-height:1.5}
+.q small{display:block;font-size:13px;color:#9fb4cf;font-weight:600;margin-bottom:6px;letter-spacing:.05em}
+
+/* 02 */
+.gallery{display:grid;gap:14px;grid-template-columns:1fr}
+.shot{background:var(--card);padding:8px;box-shadow:var(--sh2);margin:0;cursor:zoom-in;transition:transform .3s,box-shadow .3s;border:0;text-align:left;font:inherit;color:inherit;width:100%}
+.shot:hover{transform:translateY(-3px);box-shadow:var(--sh3)}
+.shot:active{transform:translateY(1px);box-shadow:var(--sh1)}
+.shot img{width:100%;height:auto;max-height:520px;object-fit:contain;background:#0d1520}
+.shot figcaption{font-size:13px;color:var(--sub);padding:8px 4px 2px}
+.steps{list-style:none;margin:0;padding:0;counter-reset:s}
+.steps li{position:relative;padding:14px 16px 14px 62px;background:var(--card);box-shadow:var(--sh1);margin-bottom:12px;transition:box-shadow .25s,transform .25s}
+.steps li:hover{box-shadow:var(--sh2);transform:translateX(4px)}
+.steps li::before{counter-increment:s;content:counter(s);position:absolute;left:14px;top:12px;width:34px;height:34px;display:grid;place-items:center;background:var(--accent);color:#fff;font-weight:800;box-shadow:0 3px 0 #064d93}
+.spec{display:grid;grid-template-columns:auto 1fr;gap:8px 16px;font-size:15px;margin:14px 0 0}
+.spec dt{color:var(--sub);font-weight:600}
+.spec dd{margin:0;font-weight:600}
+.count{font-variant-numeric:tabular-nums}
+.gauge-demo{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.rpm{position:relative;width:150px;height:150px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--p,0)*1%),var(--line) 0);display:grid;place-items:center;box-shadow:inset 0 0 0 10px var(--card),var(--sh2);transition:--p .3s}
+.rpm::after{content:"";position:absolute;inset:0}
+.rpm span{position:relative;z-index:1;text-align:center;font-weight:800;font-size:24px;font-variant-numeric:tabular-nums}
+.rpm small{display:block;font-size:12px;color:var(--sub);font-weight:600}
+.bar{height:12px;background:var(--line);box-shadow:inset 0 1px 2px rgba(0,0,0,.08);overflow:hidden;margin:8px 0 14px}
+.bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--teal));transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.bar.amber span{background:linear-gradient(90deg,var(--amber),#f5a84a)}
+.bar.green span{background:linear-gradient(90deg,var(--green),#48b884)}
+
+/* 03 */
+.study{display:flex;flex-direction:column;gap:18px}
+.study .shot-row{display:grid;grid-template-columns:1fr;gap:12px}
+.study .shot img{aspect-ratio:auto}
+.checks{margin:10px 0 0;padding:0;list-style:none}
+.checks li{padding-left:22px;position:relative;margin-bottom:6px;color:var(--sub);font-size:15px}
+.checks li::before{content:"";position:absolute;left:0;top:11px;width:10px;height:10px;background:var(--green);box-shadow:0 2px 0 rgba(0,0,0,.15)}
+
+/* 04 demo */
+.demo{background:var(--card);box-shadow:var(--sh3);padding:22px;margin-top:20px}
+.demo-controls{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin-bottom:16px;font-size:15px}
+.demo-controls label{display:flex;align-items:center;gap:8px;font-weight:600}
+.demo-controls input[type=range]{width:min(220px,60vw);accent-color:var(--accent)}
+.demo-controls input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent)}
+.demo-text{background:var(--bg);color:var(--ink);padding:20px;box-shadow:inset 0 2px 6px rgba(15,39,66,.12);font-size:var(--fs,17px);line-height:1.85;transition:background .3s,color .3s,font-size .2s}
+.demo-text h4{margin:0 0 8px;font-size:1.1em}
+.toggle-dark{background:var(--navy);color:#fff}
+
+.reflect{display:grid;gap:14px;margin-top:24px}
+.reflect .card{padding:20px}
+
+/* 05 */
+.plan{counter-reset:p}
+.plan li{list-style:none;padding:12px 0 12px 44px;position:relative;border-bottom:1px solid var(--line)}
+.plan li::before{content:"→";position:absolute;left:12px;top:12px;color:var(--accent);font-weight:800}
+.plan{padding:0;margin:0}
+
+/* 06 */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.filters button{background:var(--card);color:var(--ink);border:0;padding:9px 14px;font:600 14px var(--font);cursor:pointer;box-shadow:var(--sh1);transition:transform .15s,box-shadow .2s,background .2s}
+.filters button:hover{box-shadow:var(--sh2);transform:translateY(-2px)}
+.filters button:active{transform:translateY(1px);box-shadow:var(--sh1)}
+.filters button[aria-pressed="true"]{background:var(--navy);color:#fff;box-shadow:0 3px 0 #061829,0 10px 18px -8px rgba(15,39,66,.6)}
+.tools{display:grid;gap:18px;grid-template-columns:1fr}
+.tile{background:var(--card);box-shadow:var(--sh2);display:flex;flex-direction:column;transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s;position:relative;text-decoration:none;color:inherit}
+.tile:hover{transform:translateY(-5px);box-shadow:var(--sh3)}
+.tile:active{transform:translateY(1px);box-shadow:var(--sh1)}
+.tile.is-hidden{display:none}
+.tile .thumb{background:#0d1520;aspect-ratio:16/10;overflow:hidden;position:relative}
+.tile .thumb img{width:100%;height:100%;object-fit:cover;object-position:top;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.tile:hover .thumb img{transform:scale(1.04)}
+.tile .thumb.empty{display:grid;place-items:center;color:#8fa3bd;font-weight:700;font-size:14px;background:repeating-linear-gradient(45deg,#16202c 0 12px,#1b2734 12px 24px)}
+.tile .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.tile h3{font-size:17px}
+.tile p{font-size:15px;color:var(--sub);margin:0}
+.tile .addr{font-size:13px;color:var(--accent);font-weight:600;word-break:break-all;margin-top:auto;padding-top:8px}
+.tile .addr.none{color:var(--sub);font-weight:500}
+.open{display:inline-block;align-self:flex-start;margin-top:10px;background:var(--navy);color:#fff;font:700 13px var(--font);padding:10px 14px;text-decoration:none;box-shadow:0 3px 0 #061829,0 8px 14px -8px rgba(15,39,66,.6);transition:transform .15s,box-shadow .2s}
+.tile:hover .open{transform:translateY(-2px)}
+.open.ghost{background:var(--tint);color:var(--sub);box-shadow:var(--sh1)}
+.psr{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px;font-size:14px;line-height:1.55}
+.psr li{display:grid;grid-template-columns:44px 1fr;gap:10px;align-items:start}
+.psr b{background:var(--tint);color:var(--navy);font-size:12px;text-align:center;padding:3px 0;box-shadow:var(--sh1)}
+.more{grid-column:1/-1;background:var(--card);box-shadow:var(--sh1)}
+.more summary{cursor:pointer;padding:14px 18px;font:700 15px var(--font);list-style:none}
+.more summary::-webkit-details-marker{display:none}
+.more summary::after{content:" ▾";color:var(--accent)}
+.more[open] summary::after{content:" ▴"}
+.more-grid{padding:0 18px 18px}
+.tile.featured{outline:3px solid var(--amber);outline-offset:-3px}
+.tile .badge{position:absolute;top:12px;left:12px;background:var(--amber);color:#fff;font-size:12px;font-weight:800;padding:5px 9px;box-shadow:0 3px 0 #a85b00}
+.local-note{font-size:14px;color:var(--sub);margin-top:14px}
+
+/* footer */
+footer{padding:36px 0 56px;color:var(--sub);font-size:14px;border-top:1px solid var(--line)}
+
+/* lightbox */
+dialog.lb{border:0;padding:0;background:transparent;max-width:min(96vw,1400px);max-height:94vh;width:auto}
+dialog.lb::backdrop{background:rgba(6,14,24,.86);backdrop-filter:blur(3px)}
+dialog.lb img{max-width:96vw;max-height:88vh;width:auto;height:auto;margin:0 auto;box-shadow:0 30px 80px rgba(0,0,0,.6)}
+dialog.lb .x{position:fixed;top:max(12px,env(safe-area-inset-top));right:14px;z-index:2;background:#fff;color:var(--navy);border:0;min-height:44px;padding:10px 18px;font:700 15px var(--font);cursor:pointer;box-shadow:0 3px 0 #9fb4cf;border-radius:0}
+dialog.lb .x:active{transform:translateY(2px);box-shadow:none}
+dialog.lb .wrapper{position:relative}
+
+/* reveal */
+[data-reveal]{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.8,.2,1)}
+[data-reveal].in{opacity:1;transform:none}
+[data-reveal="left"]{transform:translateX(-22px)}
+[data-reveal="left"].in{transform:none}
+
+/* responsive */
+@media (min-width:720px){
+  body{font-size:17.5px}
+  .hero-grid{grid-template-columns:1.15fr .85fr}
+  .gallery{grid-template-columns:1fr 1fr}
+  .two{grid-template-columns:1fr 1fr}
+  .study .shot-row{grid-template-columns:repeat(3,1fr)}
+  .tools{grid-template-columns:1fr 1fr}
+  .reflect{grid-template-columns:repeat(3,1fr)}
+  .spec{grid-template-columns:110px 1fr}
+}
+@media (min-width:1000px){
+  .tools{grid-template-columns:repeat(3,1fr)}
+  .nav{gap:2px}
+}
+@media (max-width:719px){
+  .topbar .nav{display:none}
+  .hero{padding:40px 0 36px}
+  .q{font-size:18px;padding:18px}
+  .demo-controls{flex-direction:column;align-items:flex-start}
+  .btn{width:100%;justify-content:center}
+  .hero .btn{width:100%}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  [data-reveal]{opacity:1;transform:none}
+  .bar span{width:var(--w)!important}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand">SK아이젠 지원 포트폴리오</div>
+    <nav class="nav" aria-label="섹션">
+      <a href="#s1">01 문제의식</a>
+      <a href="#s2">02 OBD2</a>
+      <a href="#s3">03 학습 사이트</a>
+      <a href="#s4">04 사용자 의견</a>
+      <a href="#s5">05 계획</a>
+      <a href="#s6">06 도구 목록</a>
+    </nav>
+  </div>
+  <div class="progress" id="progress"></div>
+</header>
+
+<main>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="wrap hero-grid">
+    <div data-reveal>
+      <span class="kicker">PORTFOLIO</span>
+      <h1>복잡한 차량 데이터를 직관적인 언어로 번역하다</h1>
+      <p class="lead" style="margin-top:14px">난해한 고장 코드와 차량 신호를 직관적인 대시보드로 시각화하고, 파편화된 정비 지식을 체계적인 학습 도구로 구축한 기록입니다.</p>
+      <div class="stats">
+        <div class="stat"><b class="count" data-count="17">0</b><span>자체 개발 도구 및 웹사이트</span></div>
+        <div class="stat"><b class="count" data-count="12000">0</b><span>고장 코드 데이터 처리</span></div>
+        <div class="stat"><b><span class="count" data-count="14">0</span>/15</b><span>도구 공유 후 스터디원 합격률</span></div>
+      </div>
+      <p class="meta">이름: 정승원 · 작성일: 2026-11-14</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+        <a class="btn" href="#s2">OBD2 프로젝트 보기</a>
+        <a class="btn ghost" href="#s6">도구 목록 보기</a>
+      </div>
+    </div>
+    <figure class="hero-visual" data-reveal>
+      <img src="img/obd_gauge.png" alt="맥북 화면의 그랜저 하이브리드 OBD2 대시보드: 속도계, RPM 게이지, 차량 데이터 패널" loading="eager" data-zoom>
+      <figcaption>그림 1. 자체 개발한 OBD2 대시보드 인터페이스 (속도계·RPM·차량 데이터 실시간 연동)</figcaption>
+    </figure>
+  </div>
+
+<div class="wrap maint" data-reveal>
+  <p class="maint-title">정비하는 나 · 실제 정비 현장 사진과 영상</p>
+  <div class="maint-grid">
+    <figure><img src="img/maint_01.jpg" alt="정비 작업 모습 1" loading="lazy" data-zoom></figure>
+    <figure><img src="img/maint_02.jpg" alt="정비 작업 모습 2" loading="lazy" data-zoom></figure>
+    <figure><img src="img/maint_03.jpg" alt="정비 작업 모습 3" loading="lazy" data-zoom></figure>
+    <figure><img src="img/maint_04.jpg" alt="정비 작업 모습 4" loading="lazy" data-zoom></figure>
+    <figure><img src="img/maint_05.jpg" alt="정비 작업 모습 5" loading="lazy" data-zoom></figure>
+    <figure><img src="img/maint_06.jpg" alt="정비 작업 모습 6" loading="lazy" data-zoom></figure>
+    <figure><img src="img/maint_07.jpg" alt="정비 작업 모습 7" loading="lazy" data-zoom></figure>
+    <figure><img src="img/maint_08.jpg" alt="정비 작업 모습 8" loading="lazy" data-zoom></figure>
+    <figure><video src="img/maint_video.mp4" poster="img/maint_video_poster.jpg" muted loop playsinline controls preload="metadata" aria-label="정비 작업 영상"></video></figure>
+    <figure><video src="img/maint_video_2.mp4" poster="img/maint_video_2_poster.jpg" muted loop playsinline controls preload="metadata" aria-label="정비 작업 영상 2"></video></figure>
+    <figure><video src="img/maint_video_3.mp4" poster="img/maint_video_3_poster.jpg" muted loop playsinline controls preload="metadata" aria-label="정비 작업 영상 3"></video></figure>
+    <figure><video src="img/maint_video_4.mp4" poster="img/maint_video_4_poster.jpg" muted loop playsinline controls preload="metadata" aria-label="정비 작업 영상 4"></video></figure>
+    <figure><video src="img/maint_video_5.mp4" poster="img/maint_video_5_poster.jpg" muted loop playsinline controls preload="metadata" aria-label="정비 작업 영상 5" style="aspect-ratio:16/9"></video></figure>
+  </div>
+</div>
+</div>
+
+<!-- 01 -->
+<section id="s1">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <span class="kicker">01 · 문제의식</span>
+      <h2>고장 코드는 출발점이지만, 원인까지는 알려 주지 않습니다</h2>
+    </div>
+    <div data-reveal>
+      <p>정비 현장에서 고장 코드는 원인을 찾는 출발점입니다. 그러나 코드 하나가 여러 원인을 가리킬 수 있어, 실제 신호가 어떤 순서로 바뀌었는지 확인하는 절차가 필요합니다.</p>
+      <p>저는 이 확인 과정을 차량 데이터 화면으로 풀어 보고 싶었습니다. 차량이 보내는 값을 사람이 한눈에 볼 수 있으면, 정비 지식과 데이터를 함께 보며 원인 후보를 좁힐 수 있다고 생각했습니다.</p>
+    </div>
+    <div class="q" data-reveal>
+      <small>이 프로젝트가 묻는 질문</small>
+      차량이 보내는 데이터를 정비사가 바로 이해할 수 있는 말로 바꿀 수 있는가?
+    </div>
+  </div>
+</section>
+
+<!-- 02 -->
+<section id="s2" style="background:var(--card)">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <span class="kicker">02 · OBD2 프로젝트</span>
+      <h2>그랜저 하이브리드 OBD2 대시보드</h2>
+      <p class="lead" style="margin-top:10px">차량의 OBD2 단자에서 값을 읽어 맥북 화면에 표시하는 개인 프로젝트입니다. 속도계, RPM 게이지, 센서값을 한 화면에 배치했습니다.</p>
+    </div>
+
+    <div class="two" style="grid-template-columns:1fr">
+      <div class="layer card" data-reveal>
+        <dl class="spec">
+          <dt>역할</dt><dd>혼자 기획·구현</dd>
+          <dt>화면 구성</dt><dd>속도계 · RPM 게이지 · 센서값 패널</dd>
+          <dt>데이터</dt><dd>고장 코드 약 12,000개 처리</dd>
+          <dt>연결 방식</dt><dd>블루투스 BLE</dd>
+        </dl>
+        <p style="margin-top:16px"><a class="btn ghost" href="https://youtube.com/shorts/UOFy1AEICnU" target="_blank" rel="noopener">▶ 시연 영상 보기 (YouTube)</a></p>
+      </div>
+    </div>
+
+    <h3 style="margin:36px 0 14px" data-reveal>대시보드와 실제 차량 계기판</h3>
+    <div class="gallery" data-reveal>
+      <figure class="shot" data-zoom-wrap>
+        <img src="img/obd_app_1.jpg" alt="OBD2 대시보드 프로그램 대시보드 화면" loading="lazy" data-zoom>
+        <figcaption>그림 1. 대시보드 화면 (프로그램 실행 화면)</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/obd_cluster.png" alt="실제 차량 계기판의 하이브리드 화면" loading="lazy" data-zoom>
+        <figcaption>그림 2. 실제 차량 계기판 (하이브리드 화면)</figcaption>
+      </figure>
+    </div>
+
+    <h3 style="margin:40px 0 14px" data-reveal>실제 프로그램 화면 (고해상도 캡쳐)</h3>
+    <div class="gallery" data-reveal>
+      <figure class="shot">
+        <img src="img/obd_app_1.jpg" alt="OBD2 대시보드 프로그램 실제 화면 1" loading="lazy" data-zoom>
+        <figcaption>그림 3. 프로그램 실제 화면 (1)</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/obd_app_2.jpg" alt="OBD2 대시보드 프로그램 실제 화면 2" loading="lazy" data-zoom>
+        <figcaption>그림 4. 프로그램 실제 화면 (2)</figcaption>
+      </figure>
+    </div>
+
+    <h3 style="margin:40px 0 14px" data-reveal>테마별 화면과 고장 코드 조회 (고해상도 캡쳐)</h3>
+    <div class="gallery" data-reveal>
+      <figure class="shot">
+        <img src="img/obd_theme_nsx.jpg" alt="OBD 프로그램 NSX-R 카본 테마 화면" loading="lazy" data-zoom>
+        <figcaption>그림 5. 테마 'NSX-R 카본' 화면</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/obd_theme_80s.jpg" alt="OBD 프로그램 80s LCD 테마 화면" loading="lazy" data-zoom>
+        <figcaption>그림 6. 테마 '80s LCD' 화면</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/obd_theme_typer.jpg" alt="OBD 프로그램 Type R 화이트 테마 화면" loading="lazy" data-zoom>
+        <figcaption>그림 7. 테마 'Type R 화이트' 화면</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/obd_theme_80s_dtc.jpg" alt="80s LCD 테마에서 고장 코드 P0420이 조회된 화면" loading="lazy" data-zoom>
+        <figcaption>그림 8. 고장 코드 조회 결과 (80s LCD, P0420)</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/obd_theme_jgtc_dtc.jpg" alt="JGTC 다이얼 테마에서 고장 코드 P0420이 조회된 화면" loading="lazy" data-zoom>
+        <figcaption>그림 9. 고장 코드 조회 결과 (JGTC 다이얼, P0420)</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/obd_theme_lancia_dtc.jpg" alt="란치아 블루 테마에서 고장 코드 P0420이 조회된 화면" loading="lazy" data-zoom>
+        <figcaption>그림 10. 고장 코드 조회 결과 (란치아 블루, P0420)</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/obd_apps.png" alt="OBD 프로그램 실행 앱 아이콘" loading="lazy" data-zoom>
+        <figcaption>그림 11. 프로그램 실행 앱 아이콘</figcaption>
+      </figure>
+    </div>
+
+    <h3 style="margin:40px 0 14px" data-reveal>연결 과정: 원인을 나누어 확인했습니다</h3>
+    <p class="muted" data-reveal>처음에는 OBD2 단자를 꽂으면 맥북에 바로 연결될 것이라고 생각했습니다. 하지만 맥북에서도, 대시보드 프로그램에서도 연결되지 않았습니다.</p>
+    <ol class="steps" style="margin-top:16px" data-reveal>
+      <li>같은 방법을 반복하지 않고, 단자 · 맥북 · 프로그램 중 어디가 원인인지 나누어 생각했습니다.</li>
+      <li>같은 팀이었던 정비 경력이 있는 팀원에게 조언을 구했습니다. 맥북은 호환되는 전용 OBD 단자가 필요하다는 내용이었습니다.</li>
+      <li>연결 방식을 블루투스 BLE 방식으로 바꾸었고, 맥북과 프로그램 모두 정상적으로 연결되었습니다.</li>
+    </ol>
+    <div class="card" style="margin-top:8px" data-reveal>
+      <p style="margin:0">방식을 바꾸는 것은 계획을 버리는 일이 아니었습니다. 차량 데이터를 화면에서 확인한다는 목표를 지키기 위한 선택이었습니다.</p>
+    </div>
+
+    <h3 style="margin:40px 0 14px" data-reveal>결과: 실험 차량으로 고장 코드를 확인했습니다</h3>
+    <div class="two" data-reveal>
+      <div class="card gauge-demo" style="justify-content:space-around">
+        <div>
+          <div class="rpm" id="rpm" style="--p:0"><span><span id="rpmVal">0</span><small>RPM × 1000</small></span></div>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <p class="muted" style="margin-bottom:6px">RPM 게이지를 눌러 값을 바꿔 볼 수 있습니다.</p>
+          <input type="range" id="rpmRange" min="0" max="7" step="0.1" value="0" aria-label="RPM 조절" style="width:100%;accent-color:var(--accent)">
+        </div>
+      </div>
+      <div class="card">
+        <p style="margin-bottom:6px"><b>실험 차량에 고장을 일부러 낸 뒤 고장 코드를 읽었습니다.</b></p>
+        <p class="muted">엔진 고장 코드가 단번에 나왔습니다. 고장 코드 약 12,000개 데이터도 처리했습니다.</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px">
+          <div><span class="tag green">확인한 고장</span><br><b>엔진 고장 코드 단번에 판독</b></div>
+          <div><span class="tag">입력 데이터</span><br><b class="count"><span data-count="12000">0</span>개 고장 코드</b></div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin:40px 0 14px" data-reveal>다음 단계: 내비게이션을 설계하고 있습니다 (진행 중)</h3>
+    <div class="card" data-reveal>
+      <p>현재 위치 표시, 목적지 검색, 경로 안내를 목표로 설계 문서를 작성했습니다. <b>아직 구현하지 않은 계획입니다.</b></p>
+      <ul class="checks">
+        <li>위치 소스: 맥북 Wi-Fi 위치는 주행 중 오차가 커서, 스마트폰 GPS 연동을 우선 검토합니다.</li>
+        <li>속도 교차 검증: GPS 속도와 OBD2 속도를 비교해 터널이나 도심의 GPS 오차에 대비합니다.</li>
+        <li>주행 중 조작 최소화: 큰 글씨 안내와 음성만 쓰고, 목적지 입력은 정차 시에만 허용합니다.</li>
+      </ul>
+      <p class="muted" style="margin:14px 0 6px">단계별 진행률 (계획 기준)</p>
+      <div class="bar amber" style="--w:20%"><span data-w="20%"></span></div>
+      <p class="muted" style="font-size:14px;margin:0">5단계 중 1단계: 지도 표시와 현재 위치 마커를 시작 단계로 두었습니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 03 -->
+<section id="s3">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <span class="kicker">03 · 학습 사이트</span>
+      <h2>틀린 문제를 그림으로 이해하도록 만든 학습 도구</h2>
+      <p class="lead" style="margin-top:10px">해설을 글로만 읽으면 장치가 어떻게 움직이는지 그려지지 않았습니다. 그래서 문제를 틀리면 이미지 설명이 자동으로 나오는 사이트를 직접 만들었습니다.</p>
+    </div>
+
+    <div class="study">
+      <article class="layer card" data-reveal>
+        <span class="tag">직접 제작·배포</span> <span class="tag purple">정비산업기사</span>
+        <h3 style="margin:8px 0 6px">정비 기출 노트</h3>
+        <p>구조도(MDPS 모터 위치)와 사진 갤러리를 붙였고, 틀린 문제가 복습 대기 목록으로 다시 나오도록 했습니다. 학습 홈에서는 영역별 숙련도와 복습 대기 문제 수를 한눈에 볼 수 있습니다.</p>
+        <div class="shot-row" style="margin-top:14px">
+          <figure class="shot"><img src="img/note_home.png" alt="정비 기출 노트 학습 홈: 영역별 숙련도와 복습 대기 문제" loading="lazy" data-zoom><figcaption>학습 홈 (영역별 숙련도, 복습 대기)</figcaption></figure>
+          <figure class="shot"><img src="img/note_study.png" alt="문제 풀이 화면: 혼합비와 배출가스 그래프" loading="lazy" data-zoom><figcaption>문제 풀이 (혼합비·배출가스 그래프)</figcaption></figure>
+          <figure class="shot"><img src="img/note_structure.png" alt="구조도: MDPS 모터 위치" loading="lazy" data-zoom><figcaption>구조도 (MDPS 모터 위치)</figcaption></figure>
+        </div>
+      </article>
+
+      <article class="layer card" data-reveal>
+        <span class="tag">직접 제작·배포</span> <span class="tag purple">정비산업기사</span>
+        <h3 style="margin:8px 0 6px">정비산업기사 기출 풀이</h3>
+        <p>과목별로 문제를 고르고, 문제 원본 이미지와 3D 해설을 함께 보여 줍니다. 틀린 문제와 복습 통계를 자동으로 모아, 복습할 문제를 따로 정리하지 않아도 다시 나오도록 했습니다.</p>
+        <div class="shot-row" style="margin-top:14px">
+          <figure class="shot"><img src="img/dr_cockpit.png" alt="정비산업기사 기출 풀이 사이트 화면" loading="lazy" data-zoom><figcaption>과목별 문제 풀이 화면</figcaption></figure>
+        </div>
+      </article>
+    </div>
+
+    <div class="card" style="margin-top:24px" data-reveal>
+      <p style="margin-bottom:6px"><b>동기들과 나눈 뒤, 자동차진단평가사 2급 필기에서 15명 중 14명이 합격했습니다.</b></p>
+      <p class="muted" style="margin:0">이 결과가 사이트만의 효과라고 단정할 수는 없습니다. 다만 저는 정답을 외우기보다 원리를 직접 확인할 수 있는 학습 도구가 필요하다는 것을 배웠습니다.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 -->
+<section id="s4" style="background:var(--card)">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <span class="kicker">04 · 사용자 의견 반영</span>
+      <h2>종이책을 원하는 사용자의 의견을 기능으로 반영했습니다</h2>
+      <p class="lead" style="margin-top:10px">한 사용자가 눈이 침침해 화면을 오래 보기 어렵다며 책으로 공부하겠다고 했습니다. 저는 반대하지 않고 불편한 점을 물었고, 그 의견을 항목으로 나누었습니다.</p>
+    </div>
+
+    <div class="reflect">
+      <div class="card" data-reveal><span class="tag amber">반영 1</span><h3>다크모드</h3><p class="muted">밝기를 자기 눈에 맞게 바꿀 수 있도록 넣었습니다.</p></div>
+      <div class="card" data-reveal><span class="tag amber">반영 2</span><h3>글꼴 크기 조절</h3><p class="muted">오래 보기 어려운 사용자도 글자 크기를 조절할 수 있습니다.</p></div>
+      <div class="card" data-reveal><span class="tag green">결과</span><h3>종이보다 태블릿</h3><p class="muted">종이보다 태블릿 화면을 보는 시간이 늘었다고 알려 왔습니다.</p></div>
+    </div>
+
+    <div class="demo" data-reveal aria-label="다크모드와 글꼴 크기 체험">
+      <div class="demo-controls">
+        <label><input type="checkbox" id="darkToggle"> 다크모드 켜기</label>
+        <label>글꼴 크기 <input type="range" id="fsRange" min="15" max="24" value="17" aria-label="글꼴 크기"> <span id="fsVal">17</span>px</label>
+      </div>
+      <div class="demo-text" id="demoText">
+        <h4>체험 문단 (예시 문장)</h4>
+        <p>혼합비가 희박해지면 연소 온도가 올라가 질소산화물(NOx)이 늘어날 수 있습니다. 이 문단을 키우거나 어둡게 바꾸어 보며, 자기 눈에 맞는 설정을 찾을 수 있습니다.</p>
+      </div>
+    </div>
+
+    <p class="muted" style="margin-top:18px">이 결과가 사이트만의 효과라고 단정할 수는 없습니다. 같은 사용자는 자동차진단평가사 2급 필기와 실기에 합격했다고 알려 왔습니다.</p>
+  </div>
+</section>
+
+<!-- 05 -->
+<section id="s5">
+  <div class="wrap two" style="grid-template-columns:1fr">
+    <div data-reveal>
+      <span class="kicker">05 · 배운 점과 계획</span>
+      <h2 style="margin-bottom:18px">원인을 나누어 확인하고, 다른 의견을 기능으로 바꾸는 방법을 익혔습니다</h2>
+      <ul class="plan" style="margin:0">
+        <li>문제가 생기면 같은 방법을 반복하지 않고, 원인을 나누어 확인합니다.</li>
+        <li>정답을 외우기보다 원리를 확인할 수 있는 도구가 필요하다는 것을 배웠습니다.</li>
+        <li>다른 의견을 먼저 이해하고, 그것을 실제로 쓸 수 있는 기능으로 바꾸는 것이 함께 성장하는 방법이라고 생각합니다.</li>
+      </ul>
+    </div>
+    <div class="card" data-reveal>
+      <h3 style="margin-bottom:10px">AIGEN에서 하고 싶은 일</h3>
+      <ul class="checks">
+        <li>센서 데이터를 쉽게 정리하는 방법과 AI 모델을 차량 데이터에 연결하는 방법 배우기</li>
+        <li>고장 원인 후보를 근거와 함께 설명하도록 만드는 과정 익히기</li>
+        <li>고장 데이터와 정비 자료를 연결한 진단 설명 프로토타입 만들기</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 06 -->
+<section id="s6" style="background:var(--card)">
+  <div class="wrap">
+    <div class="sec-head" data-reveal>
+      <span class="kicker">06 · 직접 만든 도구와 웹사이트</span>
+      <h2>배포된 도구·사이트 전체 목록</h2>
+      <p class="lead" style="margin-top:10px">인터넷 주소로 바로 열 수 있는 도구는 카드를 눌러 바로 열 수 있습니다.</p>
+    </div>
+
+    <div class="filters" role="group" aria-label="분류 필터" data-reveal>
+      <button type="button" data-filter="all" aria-pressed="true">전체</button>
+      <button type="button" data-filter="study" aria-pressed="false">학습</button>
+      <button type="button" data-filter="web" aria-pressed="false">웹사이트·도구</button>
+      <button type="button" data-filter="app" aria-pressed="false">호스팅 앱</button>
+      <button type="button" data-filter="car" aria-pressed="false">차량 데이터</button>
+    </div>
+
+    <div class="tools" id="tools">
+
+      <!-- 대표 작업 -->
+      <a class="tile" data-cat="study" href="https://alexa97busan.github.io/GreenAicarmechanic1020/" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/note_home.png" alt="정비 기출 노트 학습 홈 화면" loading="lazy"></div>
+        <div class="body"><span class="tag purple">학습</span><h3>정비 기출 노트</h3><p>기출 문제 풀이, 틀린 문제의 이미지 설명, 구조도·사진 갤러리</p><ul class="psr"><li><b>문제</b>정비 기출 노트 학습 중 원리가 글로만 적혀 있어 장치 동작이 그려지지 않았습니다.</li><li><b>해결</b>틀린 문제에 맞는 이미지 설명을 자동으로 띄우고, 구조도(MDPS 모터 위치)와 배출가스 그래프를 함께 넣었습니다.</li><li><b>결과</b>학습 홈에서 복습 대기 문제 수와 영역별 숙련도를 한눈에 볼 수 있습니다.</li></ul><span class="open">바로 열기 →</span><span class="addr">alexa97busan.github.io/GreenAicarmechanic1020/</span></div>
+      </a>
+      <a class="tile" data-cat="study" href="https://alexa97busan.github.io/dr_cockpit_web/web/index.html" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/dr_cockpit.png" alt="정비산업기사 기출 풀이 화면" loading="lazy"></div>
+        <div class="body"><span class="tag purple">학습</span><h3>정비산업기사 기출 풀이</h3><p>과목별 문제 풀이, 원본 이미지, 3D 해설, 복습 통계</p><ul class="psr"><li><b>문제</b>해설을 글로만 읽으면 정답이 왜 맞는지 그려지지 않았습니다.</li><li><b>해결</b>과목별로 문제를 고르고 원본 이미지와 3D 해설을 함께 보여 줍니다.</li><li><b>결과</b>틀린 문제와 복습 통계가 자동으로 모여, 복습 문제를 따로 정리하지 않아도 다시 나옵니다.</li></ul><span class="open">바로 열기 →</span><span class="addr">alexa97busan.github.io/dr_cockpit_web/web/index.html</span></div>
+      </a>
+      <article class="tile" data-cat="study">
+        <div class="thumb"><img src="img/book_cover.jpg" alt="직접 만든 자동차정비산업기사 공부 책 표지" loading="lazy" data-zoom></div>
+        <div class="body"><span class="tag purple">학습</span><h3>직접 만든 정비산업기사 공부 책</h3><p>자동차정비산업기사 시험 준비를 위해 직접 정리한 실물 책. 표지, 목차, 엔진 구조도 등 내부 페이지를 사진으로 보여 줍니다.</p><span class="open ghost">실물 책 · 사진으로 보기</span><a class="open" href="book/book_body.pdf" target="_blank" rel="noopener">완성본 PDF 148쪽 보기 →</a><a class="open" href="book/book_cover.pdf" target="_blank" rel="noopener">표지 PDF 보기 →</a><div class="book-strip" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px"><img src="img/book_r25.jpg" alt="공부 책 내지 1" loading="lazy" data-zoom><img src="img/book_engine.jpg" alt="공부 책 엔진 구조도 페이지" loading="lazy" data-zoom><img src="img/book_contents.jpg" alt="공부 책 목차 페이지" loading="lazy" data-zoom><img src="img/book_photo_1.jpg" alt="공부 책 작업 사진 1" loading="lazy" data-zoom><img src="img/book_photo_2.jpg" alt="공부 책 작업 사진 2" loading="lazy" data-zoom></div></div>
+      </article>
+      <article class="tile featured" data-cat="car">
+        <span class="badge">대표 프로젝트</span>
+        <div class="thumb"><img src="img/obd_cluster.png" alt="그랜저 하이브리드 OBD2 대시보드 화면" loading="lazy"></div>
+        <div class="body"><span class="tag green">차량 데이터 · 맥북 앱</span><h3>그랜저 하이브리드 OBD2 대시보드</h3><p>OBD2 값을 속도계·RPM 게이지·센서 패널로 표시. 고장 코드 약 12,000개 처리.</p><ul class="psr"><li><b>문제</b>맥북과 OBD2 블루투스 단자가 연결되지 않았습니다.</li><li><b>해결</b>단자·맥북·프로그램 중 원인을 나눠 확인하고, 연결 방식을 블루투스 BLE로 바꿨습니다.</li><li><b>결과</b>맥북과 프로그램이 연결되어 속도계·RPM 게이지·센서 값을 한 화면에 표시하고, 고장 코드 약 12,000개 데이터를 처리했습니다.</li></ul><a class="open" href="https://youtube.com/shorts/UOFy1AEICnU" target="_blank" rel="noopener">시연 영상 보기 →</a><span class="addr">youtube.com/shorts/UOFy1AEICnU</span></div>
+      </article>
+      <a class="tile" data-cat="app" href="https://genai-app-dr-9100diagnosticconsole-1-178627094570-703848041581.us-central1.run.app/" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/dr9180.png" alt="DR-9180 Diagnostic Console 실제 화면" loading="lazy" data-zoom></div>
+        <div class="body"><span class="tag amber">호스팅 앱</span><h3>DR-9180 Diagnostic Console</h3><p>올인원 자동차 진단 웹 애플리케이션</p><span class="open">바로 열기 →</span><span class="addr">Cloud Run에 배포된 웹 앱</span></div>
+      </a>
+
+      <details class="more" open>
+        <summary>기타 도구 보기 (학습·웹·호스팅 앱·차량 데이터)</summary>
+        <div class="tools more-grid">
+      <a class="tile" data-cat="study" href="https://car-appraiser-study0902.ai.studio" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/appraiser.png" alt="자동차진단평가사 2급 학습 사이트 화면" loading="lazy"></div>
+        <div class="body"><span class="tag purple">학습 · 모바일</span><h3>자동차진단평가사 2급 학습 사이트</h3><p>진단평가사 2급 필기 대비 문제 풀이 사이트</p><span class="open">바로 열기 →</span><span class="addr">car-appraiser-study0902.ai.studio</span></div>
+      </a>
+      <a class="tile" data-cat="study" href="https://alexa97busan.github.io/2025caraptest0901/" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/carlab.png" alt="CarLab 인터랙티브 자동차 정비 학습 화면" loading="lazy"></div>
+        <div class="body"><span class="tag purple">학습</span><h3>CarLab</h3><p>인터랙티브 자동차 정비 학습 사이트</p><span class="open">바로 열기 →</span><span class="addr">alexa97busan.github.io/2025caraptest0901/</span></div>
+      </a>
+      <a class="tile" data-cat="study" href="https://alexa97busan.github.io/engine-atlas/" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/engine_car.jpg" alt="르노코리아 엔진 도감 차종별 탭" loading="lazy"></div>
+        <div class="body"><span class="tag purple">학습</span><h3>르노코리아 엔진 도감</h3><p>차종별·엔진별로 구분해 보는 엔진 정보 도감</p><span class="open">바로 열기 →</span><span class="addr">alexa97busan.github.io/engine-atlas/</span></div>
+      </a>
+      <a class="tile" data-cat="study" href="https://alexa97busan.github.io/sonata-6at-simulator/sonata-6at.html" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/sonata.png" alt="쏘나타 6AT 시뮬레이터 화면" loading="lazy"></div>
+        <div class="body"><span class="tag purple">학습</span><h3>쏘나타 6AT 시뮬레이터</h3><p>쏘나타 6AT 변속 과정을 보는 시뮬레이터</p><span class="open">바로 열기 →</span><span class="addr">alexa97busan.github.io/sonata-6at-simulator/sonata-6at.html</span></div>
+      </a>
+      <a class="tile" data-cat="study" href="https://alexa97busan.github.io/hunter-association/" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/hunter.png" alt="헌터협회 사이트 화면" loading="lazy"></div>
+        <div class="body"><span class="tag purple">학습</span><h3>헌터협회 사이트</h3><p>헌터협회 웹사이트</p><span class="open">바로 열기 →</span><span class="addr">alexa97busan.github.io/hunter-association/</span></div>
+      </a>
+      <a class="tile" data-cat="web" href="https://alexa97busan.github.io/gemini-watermark-remover/" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/gemini.png" alt="Gemini 워터마크 제거 웹 도구 화면" loading="lazy"></div>
+        <div class="body"><span class="tag teal">웹 도구</span><h3>Gemini 워터마크 제거</h3><p>이미지의 워터마크를 제거하는 웹 도구</p><span class="open">바로 열기 →</span><span class="addr">alexa97busan.github.io/gemini-watermark-remover/</span></div>
+      </a>
+      <a class="tile" data-cat="web" href="https://rug-swipe-16549781.figma.site" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/drawn.jpg" alt="DRAWN from life 디자인 웹사이트 화면" loading="lazy"></div>
+        <div class="body"><span class="tag teal">웹사이트</span><h3>DRAWN from life</h3><p>디자인 작업을 모아 보여 주는 웹사이트</p><span class="open">바로 열기 →</span><span class="addr">rug-swipe-16549781.figma.site</span></div>
+      </a>
+      <a class="tile" data-cat="app" href="https://paintandbodycbtstudio1.ai.studio" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/paint_cbt.png" alt="Body And Painting CBT 연습 웹앱 화면" loading="lazy"></div>
+        <div class="body"><span class="tag amber">호스팅 앱</span><h3>Body And Painting CBT</h3><p>CBT(컴퓨터 기반 시험) 연습 웹앱</p><span class="open">바로 열기 →</span><span class="addr">paintandbodycbtstudio1.ai.studio</span></div>
+      </a>
+      <a class="tile" data-cat="app" href="https://recall-navigator-aid.lovable.app" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/autoexam.png" alt="AutoExam 2급 웹앱 화면" loading="lazy"></div>
+        <div class="body"><span class="tag amber">호스팅 앱</span><h3>AutoExam 2급</h3><p>자격 시험 대비 학습 웹앱</p><span class="open">바로 열기 →</span><span class="addr">recall-navigator-aid.lovable.app</span></div>
+      </a>
+      <a class="tile" data-cat="app" href="https://bodypanelmaster08.ai.studio" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/panel.png" alt="자동차 차체 패널 마스터 화면" loading="lazy"></div>
+        <div class="body"><span class="tag amber">호스팅 앱</span><h3>자동차 차체 패널 마스터</h3><p>차체 패널 관련 학습 웹앱</p><span class="open">바로 열기 →</span><span class="addr">bodypanelmaster08.ai.studio</span></div>
+      </a>
+      <a class="tile" data-cat="app" href="https://autocasefile-7bvr4vcu.manus.space" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/casefile.jpg" alt="AUTO CASE FILE 사례 정리 웹앱 화면" loading="lazy"></div>
+        <div class="body"><span class="tag amber">호스팅 앱</span><h3>AUTO CASE FILE</h3><p>자동차 사례 정리 웹앱</p><span class="open">바로 열기 →</span><span class="addr">autocasefile-7bvr4vcu.manus.space</span></div>
+      </a>
+      <a class="tile" data-cat="car" href="https://obd2carmainten.ai.studio" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/obd_sim.png" alt="가상 OBD 시뮬레이터 MFD-800 화면" loading="lazy"></div>
+        <div class="body"><span class="tag green">차량 데이터</span><h3>가상 OBD 시뮬레이터 (MFD-800)</h3><p>OBD 값을 가상으로 확인하는 시뮬레이터</p><span class="open">바로 열기 →</span><span class="addr">obd2carmainten.ai.studio</span></div>
+      </a>
+      <a class="tile" data-cat="app" href="https://carmainver20807.ai.studio" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/advisor.png" alt="차량 정비 어드바이저 화면" loading="lazy"></div>
+        <div class="body"><span class="tag amber">호스팅 앱</span><h3>차량 정비 어드바이저</h3><p>차량 정비 관련 안내 웹앱</p><span class="open">바로 열기 →</span><span class="addr">carmainver20807.ai.studio</span></div>
+      </a>
+      <a class="tile" data-cat="web" href="https://service-879810949744.us-west1.run.app" target="_blank" rel="noopener">
+        <div class="thumb"><img src="img/fuel.jpg" alt="주행비용 계산기 화면" loading="lazy"></div>
+        <div class="body"><span class="tag teal">웹 도구</span><h3>주행비용 계산기</h3><p>차량 주행 비용을 계산하는 도구</p><span class="open">바로 열기 →</span><span class="addr">service-879810949744.us-west1.run.app</span></div>
+      </a>
+      <article class="tile" data-cat="car">
+        <div class="thumb"><img src="img/video_main.jpg" alt="영상 분석 도구 메인 화면" loading="lazy"></div>
+        <div class="body"><span class="tag green">차량 데이터 · 로컬</span><h3>영상 분석 도구</h3><p>영상 파일을 분석하는 도구</p><span class="open ghost">로컬 실행 전용</span><span class="addr none">로컬 서버에서 실행 (외부 주소 없음)</span></div>
+      </article>
+        </div>
+      </details>
+    </div>
+    <p class="local-note">※ 1인가구 지도, 중고차 시세 조사 자료 등은 도구가 아니라 데이터 정리 결과물이라 이 목록에서 제외했습니다.</p>
+    <h3 style="margin:40px 0 14px" data-reveal>영상 분석 도구 화면 (고해상도 캡쳐)</h3>
+    <div class="gallery" data-reveal>
+      <figure class="shot">
+        <img src="img/video_main.jpg" alt="영상 분석 도구 메인 화면 (YouTube 주소 입력)" loading="lazy" data-zoom>
+        <figcaption>그림 12. 메인 화면: YouTube 주소 입력</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/video_result.jpg" alt="영상 분석 도구 분석 결과 화면" loading="lazy" data-zoom>
+        <figcaption>그림 13. 분석 결과 화면</figcaption>
+      </figure>
+      <figure class="shot">
+        <img src="img/video_rewrite.jpg" alt="영상 분석 도구 다시 쓰기 화면" loading="lazy" data-zoom>
+        <figcaption>그림 14. 다시 쓰기 화면: 용도와 분량 선택</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">SK아이젠 지원 포트폴리오 · 작성일 2026-11-14 · 이름: 정승원</div>
+</footer>
+
+<dialog class="lb" id="lightbox" aria-label="이미지 확대 보기">
+  <div class="wrapper">
+    <button class="x" type="button" id="lbClose" aria-label="이미지 닫고 원래 화면으로 돌아가기">← 돌아가기 ✕</button>
+    <img id="lbImg" src="" alt="">
+  </div>
+</dialog>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // scroll progress bar
+  var bar = document.getElementById('progress');
+  function onScroll(){
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    var p = h > 0 ? (window.scrollY / h) * 100 : 0;
+    if (bar) bar.style.width = p + '%';
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  // reveal on scroll
+  var reveals = document.querySelectorAll('[data-reveal]');
+  if ('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {threshold:.15, rootMargin:'0px 0px -40px 0px'});
+    reveals.forEach(function(el){ io.observe(el); });
+  } else {
+    reveals.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  // count-up
+  function countUp(el){
+    var target = parseInt(el.getAttribute('data-count'), 10) || 0;
+    if (reduce){ el.textContent = target.toLocaleString('ko-KR'); return; }
+    var start = null, dur = 1200;
+    function step(ts){
+      if (!start) start = ts;
+      var t = Math.min((ts - start) / dur, 1);
+      var v = Math.round(target * (1 - Math.pow(1 - t, 3)));
+      el.textContent = v.toLocaleString('ko-KR');
+      if (t < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+  var counters = document.querySelectorAll('[data-count]');
+  if ('IntersectionObserver' in window){
+    var cio = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ countUp(e.target); cio.unobserve(e.target); }
+      });
+    }, {threshold:.6});
+    counters.forEach(function(el){ cio.observe(el); });
+  } else {
+    counters.forEach(function(el){ el.textContent = (parseInt(el.getAttribute('data-count'),10)||0).toLocaleString('ko-KR'); });
+  }
+
+  // progress bars fill when visible
+  var fills = document.querySelectorAll('.bar span[data-w]');
+  if ('IntersectionObserver' in window && !reduce){
+    var bio = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting){ e.target.style.width = e.target.getAttribute('data-w'); bio.unobserve(e.target); }
+      });
+    }, {threshold:.5});
+    fills.forEach(function(el){ bio.observe(el); });
+  } else {
+    fills.forEach(function(el){ el.style.width = el.getAttribute('data-w'); });
+  }
+
+  // RPM gauge demo
+  var rpm = document.getElementById('rpm'), rpmRange = document.getElementById('rpmRange'), rpmVal = document.getElementById('rpmVal');
+  function setRpm(v){
+    var n = parseFloat(v);
+    rpm.style.setProperty('--p', (n / 7) * 100);
+    rpmVal.textContent = n.toFixed(1);
+  }
+  if (rpmRange){
+    rpmRange.addEventListener('input', function(){ setRpm(this.value); });
+    setRpm(rpmRange.value);
+  }
+
+  // live demo: dark mode + font size
+  var dark = document.getElementById('darkToggle'), fs = document.getElementById('fsRange'), fsVal = document.getElementById('fsVal'), demo = document.getElementById('demoText');
+  if (dark && demo){
+    dark.addEventListener('change', function(){
+      if (this.checked){ demo.style.background = '#0c1118'; demo.style.color = '#e9eef5'; }
+      else { demo.style.background = ''; demo.style.color = ''; }
+    });
+  }
+  if (fs && demo){
+    fs.addEventListener('input', function(){
+      demo.style.setProperty('--fs', this.value + 'px');
+      fsVal.textContent = this.value;
+    });
+  }
+
+  // category filter
+  var filterBtns = document.querySelectorAll('[data-filter]');
+  var tiles = document.querySelectorAll('#s6 [data-cat]');
+  var more = document.querySelector('.more');
+  filterBtns.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var f = this.getAttribute('data-filter');
+      filterBtns.forEach(function(b){ b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+      if (more && f !== 'all') more.open = true;
+      tiles.forEach(function(t){
+        var show = f === 'all' || t.getAttribute('data-cat') === f;
+        t.classList.toggle('is-hidden', !show);
+      });
+    });
+  });
+
+  // lightbox
+  var lb = document.getElementById('lightbox'), lbImg = document.getElementById('lbImg');
+  document.querySelectorAll('img[data-zoom]').forEach(function(img){
+    img.style.cursor = 'zoom-in';
+    img.addEventListener('click', function(){
+      lbImg.src = this.getAttribute('src');
+      lbImg.alt = this.getAttribute('alt') || '';
+      if (lb.showModal) lb.showModal(); else lb.setAttribute('open','');
+    });
+  });
+  document.getElementById('lbClose').addEventListener('click', function(){ lb.close(); });
+  lb.addEventListener('click', function(e){ if (e.target === lb) lb.close(); });
+})();
+</script>
+</body>
+</html>
