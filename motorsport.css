@@ -107,13 +107,12 @@ section{padding:56px 0;position:relative}
   transform:perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0);transition:transform .25s cubic-bezier(.16,1,.3,1)}
 .card:nth-child(odd),.tile:nth-child(odd),.shot:nth-child(odd){--side:-1}
 .card:nth-child(even),.tile:nth-child(even),.shot:nth-child(even){--side:1}
-.card:hover .tilt,.tile:hover .tilt,.shot:hover .tilt{
-  transform:perspective(1000px) rotateX(var(--rx,3deg)) rotateY(var(--ry,calc(var(--side,-1)*-4deg))) translateZ(35px)}
+.card:hover .tilt,.tile:hover .tilt,.shot:hover .tilt{transform:translateY(-8px)}
 .card:hover,.tile:hover,.shot:hover{
   border-color:#AAB3C0;
   box-shadow:calc(var(--side,-1)*18px) 24px 45px rgba(10,14,22,.14),calc(var(--side,-1)*35px) 45px 85px rgba(10,14,22,.10),var(--halo);
 }
-.card:active .tilt,.tile:active .tilt,.shot:active .tilt{transform:perspective(1000px) translateZ(10px)}
+.card:active .tilt,.tile:active .tilt,.shot:active .tilt{transform:translateY(-2px)}
 .card::before,.tile::before,.shot::before{
   content:"";position:absolute;top:-100%;left:-100%;width:300%;height:300%;background:var(--white-prism);
   opacity:.18;pointer-events:none;mix-blend-mode:overlay;transform:rotate(35deg);
@@ -124,9 +123,6 @@ section{padding:56px 0;position:relative}
 .card:hover{box-shadow:calc(var(--side,-1)*18px) 24px 45px rgba(10,14,22,.14),calc(var(--side,-1)*35px) 45px 85px rgba(10,14,22,.10),var(--halo)}
 .card h3{font-family:var(--display);font-weight:900;text-transform:uppercase;letter-spacing:.01em;font-size:18px}
 .card .tilt > *:not(.tag){position:relative;z-index:1}
-/* 분해 레이어: 호버 시 내부 요소가 Z축으로 떠오름 (배경 0 → 콘텐츠 +8px → 태그 +14px) */
-.card:hover .tilt > *:not(.tag),.shot:hover .tilt > *{transform:translateZ(8px);transition:transform .35s cubic-bezier(.16,1,.3,1)}
-.card:hover .tilt > .tag{transform:translateZ(14px);transition:transform .35s cubic-bezier(.16,1,.3,1)}
 /* 이벤트 버블링 차단: 카드 안 텍스트/태그는 포인터를 가로채지 않음 (링크는 예외) */
 .card .tilt > *{pointer-events:none}
 .card a{pointer-events:auto}
