@@ -1,4 +1,11 @@
 /* Jun × Trust 포스터 스펙 적용 — 화이트·그레이 베이스, 0px 직각, 순백 후광·프리즘·개별 3D 틸트 */
+@font-face{font-family:"Orbit";src:url("fonts/Orbit-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Space Grotesk";src:url("fonts/SpaceGrotesk-Regular.ttf") format("truetype");font-weight:400;font-display:swap}
+@font-face{font-family:"Space Grotesk";src:url("fonts/SpaceGrotesk-Medium.ttf") format("truetype");font-weight:500;font-display:swap}
+@font-face{font-family:"Space Grotesk";src:url("fonts/SpaceGrotesk-Bold.ttf") format("truetype");font-weight:700;font-display:swap}
+@font-face{font-family:"Syne";src:url("fonts/Syne-Bold.ttf") format("truetype");font-weight:700;font-display:swap}
+@font-face{font-family:"Syne";src:url("fonts/Syne-ExtraBold.ttf") format("truetype");font-weight:800 900;font-display:swap}
+@font-face{font-family:"Anybody";src:url("fonts/Anybody-Black.ttf") format("truetype");font-weight:900;font-display:swap}
 :root{
   --ink:#0C0F14; --sub:#5A6270; --line:#CFD5DE; --bg:#E2E6EE; --card:#FFFFFF; --tint:#EEF1F5;
   --navy:#1C2028; --navy2:#2B2F38; --accent:#1C2028; --btn-bg:#1C2028; --btn-ink:#FFFFFF;
@@ -10,8 +17,9 @@
   --sh3:0 20px 40px rgba(15,20,32,.10),0 40px 80px rgba(15,20,32,.06);
   --halo:0 0 65px #FFFFFF,0 0 110px #FFFFFF;
   --white-prism:linear-gradient(135deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.4) 44%,rgba(255,255,255,.95) 50%,rgba(255,255,255,.4) 56%,rgba(255,255,255,0) 100%);
-  --font:"Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","Helvetica Neue",system-ui,sans-serif;
-  --display:"Arial Black","Helvetica Neue",var(--font);
+  --font:"Space Grotesk","Orbit","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","Helvetica Neue",system-ui,sans-serif;
+  --display:"Syne","Orbit","Arial Black","Helvetica Neue",var(--font);
+  --num:"Anybody","Syne","Arial Black",var(--font);
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
@@ -69,7 +77,7 @@ section{padding:56px 0;position:relative}
 .hero-grid{display:grid;gap:32px;align-items:center}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:28px}
 .stat{background:var(--card);padding:14px 12px;border:1px solid var(--line);border-top:3px solid var(--ink);box-shadow:var(--sh1)}
-.stat b{display:block;font-family:var(--display);font-size:clamp(22px,4vw,30px);font-weight:900;color:var(--ink);white-space:nowrap}
+.stat b{display:block;font-family:var(--num);font-size:clamp(22px,4vw,30px);font-weight:900;color:var(--ink);white-space:nowrap}
 .stat span{font-size:12px;color:var(--sub);text-transform:uppercase;letter-spacing:.04em}
 .hero-visual{position:relative;background:var(--card);padding:10px;border:1px solid var(--line);box-shadow:var(--sh2)}
 .hero-visual img{width:100%;aspect-ratio:1/1;object-fit:cover}
