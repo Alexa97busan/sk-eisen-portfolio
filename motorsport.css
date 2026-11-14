@@ -19,7 +19,7 @@
   --white-prism:linear-gradient(135deg,rgba(255,255,255,0) 0%,rgba(255,255,255,.4) 44%,rgba(255,255,255,.95) 50%,rgba(255,255,255,.4) 56%,rgba(255,255,255,0) 100%);
   --font:"Space Grotesk","Orbit","Apple SD Gothic Neo","Noto Sans KR","Malgun Gothic","Helvetica Neue",system-ui,sans-serif;
   --display:"Syne","Orbit","Arial Black","Helvetica Neue",var(--font);
-  --num:"Anybody","Syne","Arial Black",var(--font);
+  --num:var(--font);
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
